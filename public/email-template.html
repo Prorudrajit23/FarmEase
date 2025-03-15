@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FarmEase Invoice</title>
+    <style>
+        /* Base styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Header styles */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #4CAF50;
+            background: linear-gradient(to bottom, #f8fff8 0%, #ffffff 100%);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .logo-text {
+            color: #2E7D32;
+            font-size: 32px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        
+        .logo-leaf {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+        
+        .header h1 {
+            color: #2E7D32;
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        /* Invoice info styles */
+        .invoice-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .invoice-details, .customer-details {
+            flex: 1;
+        }
+        
+        .invoice-details h3, .customer-details h3 {
+            color: #2E7D32;
+            margin-top: 0;
+        }
+        
+        /* Table styles */
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .invoice-table th {
+            background-color: #f2f9f2;
+            color: #2E7D32;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #4CAF50;
+        }
+        
+        .invoice-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .invoice-table .item-name {
+            width: 50%;
+        }
+        
+        .invoice-table .text-right {
+            text-align: right;
+        }
+        
+        .invoice-table .text-center {
+            text-align: center;
+        }
+        
+        /* Total section */
+        .total-section {
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 5px;
+        }
+        
+        .total-label {
+            width: 150px;
+            text-align: right;
+            padding-right: 20px;
+        }
+        
+        .total-value {
+            width: 100px;
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .grand-total {
+            font-size: 18px;
+            color: #2E7D32;
+            border-top: 2px solid #4CAF50;
+            padding-top: 5px;
+        }
+        
+        /* Footer styles */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .thank-you {
+            background-color: #f2f9f2;
+            padding: 15px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .thank-you p {
+            margin: 0;
+            color: #2E7D32;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        /* Responsive adjustments */
+        @media only screen and (max-width: 600px) {
+            .invoice-info {
+                flex-direction: column;
+            }
+            
+            .invoice-details, .customer-details {
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg class="logo-leaf" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6,3C8,3,11,4,13,7C15,10,16,13,16,15C16,17,15,17,15,17C15,17,14,17,14,15C14,13,13,10,11,7C9,4,6,3,4,3C2,3,2,2,2,2C2,2,2,1,4,1C6,1,8,1,10,3C12,5,13,7,13,9C13,11,12,12,12,12C12,12,11,11,11,9C11,7,10,5,8,3C6,1,4,1,2,1"/>
+                    </svg>
+                </div>
+                <span class="logo-text">FarmEase</span>
+            </div>
+            <h1>INVOICE</h1>
+        </div>
+        
+        <!-- Invoice Information -->
+        <div class="invoice-info">
+            <div class="invoice-details">
+                <h3>Invoice Details</h3>
+                <p><strong>Invoice #:</strong> {{order_number}}</p>
+                <p><strong>Date:</strong> {{order_date}}</p>
+            </div>
+            <div class="customer-details">
+                <h3>Customer Details</h3>
+                <p><strong>Email:</strong> {{to_email}}</p>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <h3>Order Summary</h3>
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th class="item-name">Product</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-right">Price</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{items_list_html}}
+            </tbody>
+        </table>
+        
+        <!-- Total Section -->
+        <div class="total-section">
+            <div class="total-row">
+                <div class="total-label">Subtotal:</div>
+                <div class="total-value">{{total_amount}}</div>
+            </div>
+            <div class="total-row">
+                <div class="total-label">Shipping:</div>
+                <div class="total-value">Free</div>
+            </div>
+            <div class="total-row grand-total">
+                <div class="total-label">Total Amount:</div>
+                <div class="total-value">{{total_amount}}</div>
+            </div>
+        </div>
+        
+        <!-- Thank You Message -->
+        <div class="thank-you">
+            <p>Thank you for shopping with FarmEase!</p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>FarmEase - Connecting Farmers and Consumers</p>
+            <p>© 2023 FarmEase. All rights reserved.</p>
+            <p>If you have any questions, please contact us at support@farmease.com</p>
+        </div>
+    </div>
+</body>
+</html> 
