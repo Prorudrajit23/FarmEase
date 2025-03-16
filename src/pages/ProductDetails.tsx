@@ -123,7 +123,7 @@ const ProductDetails = () => {
         setLoading(true);
         
         // Fetch the product by ID
-        const { data: productData, error: productError } = await supabase
+        const { data, error: productError } = await supabase
           .from('products')
           .select('*')
           .eq('id', id)
@@ -134,8 +134,23 @@ const ProductDetails = () => {
           return;
         }
         
-        if (productData) {
-          setProduct(productData);
+        if (data) {
+          // Cast the data to any to bypass TypeScript type checking temporarily
+          const productData = data as any;
+          
+          // Set the product with required fields
+          setProduct({
+            id: productData.id,
+            name: productData.name,
+            price: productData.price,
+            description: productData.description,
+            image: productData.image,
+            category_id: productData.category_id,
+            stock: productData.stock || 0,
+            created_at: productData.created_at,
+            seller_id: productData.seller_id,
+            video_url: productData.video_url
+          });
           
           // Fetch the category name
           const { data: categoryData } = await supabase
@@ -202,18 +217,25 @@ const ProductDetails = () => {
     }
     
     if (isRentalProduct) {
-      addToCart({
+      // Create a basic cart item
+      const cartItem = {
         id: product.id,
         name: product.name,
         price: totalPrice?.toString() || product.price,
         image: product.image,
         quantity: 1,
-        category: getCategoryDisplayName(categoryName),
-        rentalDates: {
-          from: fromDate.toISOString(),
-          to: toDate.toISOString()
-        }
-      });
+        category: getCategoryDisplayName(categoryName)
+      };
+      
+      // Use the any type to bypass TypeScript checking for rental dates
+      // This allows us to add rentalDates without modifying the CartItem interface
+      (cartItem as any).rentalDates = {
+        from: fromDate.toISOString(),
+        to: toDate.toISOString()
+      };
+      
+      // Add to cart
+      addToCart(cartItem);
       
       toast({
         title: "Added to cart",
@@ -520,7 +542,7 @@ const ProductDetails = () => {
         </div>
         
         {/* Video Section - Only show for Equipment and Organic categories */}
-        {product.video_url && (isRentalProduct || categoryName === "Organic") && (
+        {product.video_url && (isRentalProduct || categoryName === "Organic Produce") && (
           <div className="mt-12 rounded-lg overflow-hidden shadow-lg bg-white">
             <h3 className="text-xl font-semibold text-green-800 p-4 border-b flex items-center">
               <Video className="mr-2 h-5 w-5" />
@@ -530,9 +552,8 @@ const ProductDetails = () => {
               <div className="relative w-full h-0 pb-[56.25%]">
                 <iframe 
                   id="player" 
-                  type="text/html" 
                   src={product.video_url}
-                  frameBorder="0"
+                  style={{ border: 0 }}
                   className="absolute top-0 left-0 w-full h-full"
                   allowFullScreen
                 ></iframe>
