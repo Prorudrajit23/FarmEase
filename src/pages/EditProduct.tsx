@@ -31,6 +31,16 @@ interface Category {
   name: string;
 }
 
+interface ProductUpdate {
+  name: string;
+  price: string;
+  description: string;
+  image: string;
+  category_id: string;
+  stock: number;
+  video_url: string | null;
+}
+
 const formSchema = z.object({
   name: z.string().min(3, "Product name must be at least 3 characters"),
   price: z.string().min(1, "Price is required"),
@@ -121,7 +131,7 @@ const EditProduct = () => {
       try {
         setIsLoading(true);
         
-        const { data, error } = await supabase
+        const { data: rawData, error } = await supabase
           .from('products')
           .select('*')
           .eq('id', id)
@@ -130,6 +140,9 @@ const EditProduct = () => {
         if (error) {
           throw error;
         }
+        
+        // Use type assertion to handle missing properties
+        const data = rawData as any;
         
         // Check if the product belongs to the current user
         if (data.seller_id !== user.id) {
@@ -149,7 +162,8 @@ const EditProduct = () => {
           description: data.description,
           image: data.image,
           category_id: data.category_id,
-          stock: data.stock,
+          stock: data.stock || 1,
+          video_url: data.video_url || "",
         });
         
         setProductLoaded(true);
@@ -187,15 +201,28 @@ const EditProduct = () => {
         values.video_url = convertYouTubeUrl(values.video_url);
       }
       
-      // Update the product in the database
-      const { error } = await supabase
+      // Create a strongly typed update object
+      const productUpdate: ProductUpdate = {
+        name: values.name,
+        price: values.price,
+        description: values.description,
+        image: values.image,
+        category_id: values.category_id,
+        stock: values.stock,
+        video_url: values.video_url || null
+      };
+      
+      // Bypass TypeScript with 'any'
+      // Using the 'as any' casting to avoid the deep type instantiation error
+      const supabaseAny = supabase as any;
+      const result = await supabaseAny
         .from('products')
-        .update(values)
+        .update(productUpdate)
         .eq('id', id)
         .eq('seller_id', user.id);
       
-      if (error) {
-        throw error;
+      if (result.error) {
+        throw result.error;
       }
       
       toast({
