@@ -6,6 +6,8 @@ import Organic from "./pages/Organic";
 import Produce from "./pages/Produce";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import ProductDetails from "./pages/ProductDetails";
 import MyProducts from "./pages/MyProducts";
 import AddProduct from "./pages/AddProduct";
@@ -29,6 +31,8 @@ function App() {
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/cart" element={<Cart />} />
             
             {/* Seller Routes */}

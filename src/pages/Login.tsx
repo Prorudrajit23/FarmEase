@@ -158,7 +158,19 @@ const Login = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>Password</FormLabel>
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto text-xs font-medium"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate("/forgot-password");
+                        }}
+                      >
+                        Forgot password?
+                      </Button>
+                    </div>
                     <FormControl>
                       <Input
                         type="password"
@@ -181,7 +193,7 @@ const Login = () => {
             </form>
           </Form>
 
-          <div className="text-center">
+          <div className="text-center mt-4">
             <p className="text-sm text-muted-foreground">
               Don't have an account?{" "}
               <Button

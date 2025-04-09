@@ -16,6 +16,10 @@ type AuthContextType = {
     data: { user: User | null };
   }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{
+    error: Error | null;
+    data: { user: User | null };
+  }>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -159,8 +163,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      return {
+        data: { user: null },
+        error: null
+      };
+    } catch (error) {
+      console.error("Reset password error:", error);
+      return {
+        data: { user: null },
+        error: error as Error
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ session, user, isLoading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ session, user, isLoading, signIn, signUp, signOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );
